@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>13 – Bewertungsbogen</title>
+<style>
+  :root{
+    --ink:#141a20;
+    --muted:#5d6b78;
+    --line:#d8e0e8;
+    --bg:#f4f7fa;
+    --card:#fff;
+    --accent:#0a5bd6;
+    --accent-soft:#e4edfc;
+    --ok:#16a34a;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    padding:0 0 64px;
+  }
+  .wrap{max-width:720px;margin:0 auto;padding:0 16px}
+  header{padding:28px 0 8px}
+  h1{font-size:26px;line-height:1.2;margin:0 0 6px;letter-spacing:-.01em}
+  .sub{color:var(--muted);font-size:15px;margin:0}
+  .panel{
+    background:var(--card);border:1px solid var(--line);border-radius:10px;
+    padding:18px;margin:16px 0;
+  }
+  .panel h2{font-size:17px;margin:0 0 10px}
+  .panel p{margin:0 0 10px;color:var(--muted);font-size:15px}
+  .panel p:last-child{margin-bottom:0}
+  ol.howto{margin:0;padding-left:20px;color:var(--muted);font-size:15px}
+  ol.howto li{margin-bottom:6px}
+
+  label.field{display:block;font-weight:600;font-size:14px;margin:0 0 6px}
+  select,input[type=text],textarea{
+    width:100%;font:inherit;color:inherit;background:#fff;
+    border:1px solid var(--line);border-radius:8px;padding:10px 12px;
+  }
+  textarea{min-height:64px;resize:vertical}
+  select:focus,input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+
+  nav.tabs{
+    display:flex;gap:6px;overflow-x:auto;padding:10px 0;
+    position:sticky;top:0;background:var(--bg);z-index:5;
+    -webkit-overflow-scrolling:touch;
+  }
+  nav.tabs button{
+    flex:0 0 auto;font:inherit;font-size:14px;font-weight:600;
+    background:#fff;color:var(--ink);border:1px solid var(--line);
+    border-radius:999px;padding:9px 14px;cursor:pointer;min-height:44px;
+  }
+  nav.tabs button[aria-selected=true]{background:var(--accent);border-color:var(--accent);color:#fff}
+  nav.tabs button .done{color:var(--ok);font-weight:700}
+  nav.tabs button[aria-selected=true] .done{color:#bff5d3}
+
+  section.variant{display:none}
+  section.variant.active{display:block}
+  .vhead{margin:6px 0 4px}
+  .vhead h2{font-size:20px;margin:0 0 2px}
+  .vhead .tag{color:var(--muted);font-size:14px}
+
+  .q{border-top:1px solid var(--line);padding:14px 0}
+  .q:first-of-type{border-top:0}
+  .q .qt{font-weight:600;font-size:15px;margin:0 0 2px}
+  .q .qh{color:var(--muted);font-size:13.5px;margin:0 0 10px}
+  .scale{display:flex;gap:6px}
+  .scale label{
+    flex:1;position:relative;display:flex;align-items:center;justify-content:center;
+    min-height:44px;border:1px solid var(--line);border-radius:8px;background:#fff;
+    font-weight:600;cursor:pointer;font-size:15px;
+  }
+  .scale input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer}
+  .scale label:has(input:checked){background:var(--accent);border-color:var(--accent);color:#fff}
+  .scale label:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+  .scalelegend{display:flex;justify-content:space-between;color:var(--muted);font-size:12.5px;margin-top:6px}
+
+  .free{margin-top:16px}
+  .free + .free{margin-top:12px}
+
+  .total{
+    display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+    background:var(--accent-soft);border-radius:8px;padding:12px 14px;margin-top:16px;font-size:15px;
+  }
+  .total b{font-size:20px}
+
+  .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+  .btn{
+    font:inherit;font-weight:600;font-size:15px;min-height:48px;padding:0 18px;
+    border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer;
+  }
+  .btn.ghost{background:#fff;color:var(--accent)}
+  .hint{color:var(--muted);font-size:14px;margin-top:8px}
+  .out{
+    width:100%;min-height:180px;font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    white-space:pre;margin-top:12px;
+  }
+  @media print{
+    nav.tabs,.actions,.hint{display:none}
+    section.variant{display:block!important;page-break-before:always}
+    body{background:#fff}
+    .panel,.scale label{border-color:#999}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>„13“ – welches Design soll es werden?</h1>
+  <p class="sub">Fünf Entwürfe für unser Kartenspiel. Schau dir jeden kurz an und sag mir, was du davon hältst.</p>
+</header>
+
+<div class="panel">
+  <h2>So geht's</h2>
+  <ol class="howto">
+    <li>Trag oben deinen Namen ein.</li>
+    <li>Öffne einen der fünf Design-Entwürfe (die HTML-Dateien) und klick dich einmal durch alle Screens.</li>
+    <li>Komm hierher zurück, wähl oben den passenden Reiter und vergib deine Noten: <b>1 = schlecht, 5 = super</b>.</li>
+    <li>Das Ganze fünfmal. Dauert pro Entwurf etwa fünf Minuten.</li>
+    <li>Ganz unten auf <b>Ergebnis kopieren</b> tippen und mir den Text schicken.</li>
+  </ol>
+  <p style="margin-top:10px">Wenn du bei einer Frage nichts sagen kannst, lass sie einfach frei. Die zwei Textfelder pro Entwurf sind mir am wichtigsten – da darf ruhig Klartext stehen.</p>
+</div>
+
+<div class="panel">
+  <label class="field" for="name">Dein Name</label>
+  <select id="name">
+    <option value="">bitte auswählen …</option>
+    <option>Andy</option>
+    <option>Thomas</option>
+    <option>Martin</option>
+    <option>Michi</option>
+    <option value="__andere">jemand anderes …</option>
+  </select>
+  <div id="nameOtherWrap" style="display:none;margin-top:10px">
+    <label class="field" for="nameOther">Name eintragen</label>
+    <input type="text" id="nameOther" autocomplete="name">
+  </div>
+</div>
+
+<nav class="tabs" id="tabs" role="tablist" aria-label="Entwürfe"></nav>
+
+<div id="variants"></div>
+
+<div class="panel">
+  <h2>Zum Schluss</h2>
+  <label class="field" for="favorite">Welcher Entwurf soll es werden?</label>
+  <select id="favorite">
+    <option value="">bitte auswählen …</option>
+  </select>
+  <div class="free">
+    <label class="field" for="favWhy">Warum der?</label>
+    <textarea id="favWhy" placeholder="Ein, zwei Sätze reichen."></textarea>
+  </div>
+  <div class="free">
+    <label class="field" for="general">Sonst noch was? Etwas am Spiel selbst, das dir aufgefallen ist?</label>
+    <textarea id="general" placeholder="Optional."></textarea>
+  </div>
+</div>
+
+<div class="panel">
+  <h2>Fertig</h2>
+  <p>Tipp auf den Knopf, dann liegt dein Ergebnis als Text in der Zwischenablage – einfach in WhatsApp oder eine Mail einfügen und mir schicken.</p>
+  <div class="actions">
+    <button class="btn" id="copyBtn" type="button">Ergebnis kopieren</button>
+    <button class="btn ghost" id="showBtn" type="button">Text anzeigen</button>
+    <button class="btn ghost" id="printBtn" type="button">Drucken</button>
+  </div>
+  <p class="hint" id="copyHint"></p>
+  <textarea class="out" id="out" style="display:none" readonly></textarea>
+</div>
+
+</div>
+
+<script>
+(function(){
+  var VARIANTS = [
+    {id:"R1", name:"Alpin / Weltcup",        tag:"Ski-Weltcup-Optik: Startnummern, Ergebnistafel, Podium"},
+    {id:"R2", name:"Wirtshaus / Stammtisch", tag:"Holz, Bierdeckel, Kreidetafel"},
+    {id:"R3", name:"Klar & Schlicht",        tag:"Aufgeräumt und sachlich, wie eine Ergebnis-App"},
+    {id:"R4", name:"Party",                  tag:"Bunt, laut, dicke Rahmen, große Zahlen"},
+    {id:"R5", name:"Dunkel & Edel",          tag:"Dunkler Tisch, Glasflächen, Licht von oben"}
+  ];
+
+  var QUESTIONS = [
+    {k:"lesbar",  t:"Konntest du deine Karten gut lesen?",              h:"Auf dem Handy, ohne die Augen zusammenzukneifen."},
+    {k:"dran",    t:"War sofort klar, wer gerade dran ist?",            h:"Ohne suchen zu müssen."},
+    {k:"ansage",  t:"War die Ansage-Eingabe verständlich?",             h:"Der Screen, auf dem du deine Stiche ansagst."},
+    {k:"stern",   t:"Hast du die Stern-Regel kapiert?",                 h:"Der Hinweis für den letzten Ansager, wenn die Summe aufgeht."},
+    {k:"zaehler", t:"Sahst du auf einen Blick, wie alle vier stehen?",  h:"Also gemachte Stiche gegen Ansage, bei jedem Spieler."},
+    {k:"bot",     t:"War die Bot-Übernahme klar und ruhig?",            h:"Wenn einer rausfliegt und der Computer für ihn weiterspielt."},
+    {k:"bonus",   t:"Hat der +10-Moment Spaß gemacht?",                 h:"Am Rundenende, wenn jemand seine Ansage genau trifft."},
+    {k:"weltcup", t:"Kam Weltcup-Gefühl auf?",                          h:"Ortsname der Partie, Tabelle, Podium."},
+    {k:"ausdauer",t:"Hältst du damit 13 Runden aus, ohne genervt zu sein?", h:"Ehrlich sein."},
+    {k:"spielen", t:"Würdest du so spielen wollen?",                    h:"Bauchgefühl."}
+  ];
+
+  var state = {};
+  VARIANTS.forEach(function(v){ state[v.id] = {scores:{}, keep:"", annoy:""}; });
+
+  var tabsEl = document.getElementById("tabs");
+  var varsEl = document.getElementById("variants");
+  var favEl  = document.getElementById("favorite");
+
+  VARIANTS.forEach(function(v, i){
+    var b = document.createElement("button");
+    b.type = "button";
+    b.setAttribute("role","tab");
+    b.setAttribute("aria-selected", i===0 ? "true" : "false");
+    b.dataset.id = v.id;
+    b.innerHTML = v.id + " " + v.name + ' <span class="done" data-done="'+v.id+'"></span>';
+    b.addEventListener("click", function(){ select(v.id); });
+    tabsEl.appendChild(b);
+
+    var s = document.createElement("section");
+    s.className = "variant" + (i===0 ? " active" : "");
+    s.dataset.id = v.id;
+
+    var head = '<div class="vhead"><h2>' + v.id + " – " + v.name + '</h2><div class="tag">' + v.tag + '</div></div>';
+    var body = '<div class="panel">';
+    QUESTIONS.forEach(function(q){
+      body += '<div class="q"><p class="qt">' + q.t + '</p><p class="qh">' + q.h + '</p><div class="scale">';
+      for (var n=1; n<=5; n++){
+        body += '<label><input type="radio" name="'+v.id+"_"+q.k+'" value="'+n+'" data-v="'+v.id+'" data-q="'+q.k+'"><span>'+n+'</span></label>';
+      }
+      body += '</div><div class="scalelegend"><span>1 = schlecht</span><span>5 = super</span></div></div>';
+    });
+    body += '<div class="free"><label class="field" for="'+v.id+'_keep">Was soll unbedingt bleiben?</label>'
+          + '<textarea id="'+v.id+'_keep" data-v="'+v.id+'" data-f="keep" placeholder="Ein Satz reicht."></textarea></div>'
+          + '<div class="free"><label class="field" for="'+v.id+'_annoy">Was hat dich gestört?</label>'
+          + '<textarea id="'+v.id+'_annoy" data-v="'+v.id+'" data-f="annoy" placeholder="Ein Satz reicht."></textarea></div>'
+          + '<div class="total"><span>Punkte für ' + v.id + '</span><span><b data-total="'+v.id+'">0</b> von 50</span></div>'
+          + '</div>';
+    s.innerHTML = head + body;
+    varsEl.appendChild(s);
+
+    var o = document.createElement("option");
+    o.value = v.id;
+    o.textContent = v.id + " – " + v.name;
+    favEl.appendChild(o);
+  });
+
+  function select(id){
+    Array.prototype.forEach.call(tabsEl.children, function(b){
+      b.setAttribute("aria-selected", b.dataset.id === id ? "true" : "false");
+    });
+    Array.prototype.forEach.call(varsEl.children, function(s){
+      s.classList.toggle("active", s.dataset.id === id);
+    });
+    window.scrollTo({top:0, behavior:"smooth"});
+  }
+
+  document.addEventListener("change", function(e){
+    var t = e.target;
+    if (t.type === "radio" && t.dataset.v){
+      state[t.dataset.v].scores[t.dataset.q] = parseInt(t.value,10);
+      refresh(t.dataset.v);
+    }
+    if (t.id === "name"){
+      document.getElementById("nameOtherWrap").style.display = t.value === "__andere" ? "block" : "none";
+    }
+  });
+
+  document.addEventListener("input", function(e){
+    var t = e.target;
+    if (t.tagName === "TEXTAREA" && t.dataset.v){
+      state[t.dataset.v][t.dataset.f] = t.value;
+    }
+  });
+
+  function refresh(id){
+    var sc = state[id].scores, sum = 0, n = 0;
+    for (var k in sc){ sum += sc[k]; n++; }
+    document.querySelector('[data-total="'+id+'"]').textContent = sum;
+    var mark = document.querySelector('[data-done="'+id+'"]');
+    mark.textContent = n === QUESTIONS.length ? "✓" : (n ? "·" : "");
+  }
+
+  function personName(){
+    var v = document.getElementById("name").value;
+    if (v === "__andere") return document.getElementById("nameOther").value.trim() || "(ohne Namen)";
+    return v || "(ohne Namen)";
+  }
+
+  function buildText(){
+    var L = [];
+    L.push("13 – Design-Bewertung");
+    L.push("Von: " + personName());
+    L.push("Datum: " + new Date().toLocaleDateString("de-DE"));
+    L.push("");
+    VARIANTS.forEach(function(v){
+      var st = state[v.id], sum = 0, n = 0;
+      QUESTIONS.forEach(function(q){
+        if (st.scores[q.k]){ sum += st.scores[q.k]; n++; }
+      });
+      L.push("=== " + v.id + " – " + v.name + "  [" + sum + " von 50" + (n < QUESTIONS.length ? ", " + (QUESTIONS.length - n) + " offen" : "") + "] ===");
+      QUESTIONS.forEach(function(q){
+        L.push("  " + (st.scores[q.k] || "-") + "   " + q.t);
+      });
+      if (st.keep)  L.push("  Bleiben: " + st.keep);
+      if (st.annoy) L.push("  Stört:   " + st.annoy);
+      L.push("");
+    });
+    var fav = document.getElementById("favorite");
+    L.push("Favorit: " + (fav.value ? fav.options[fav.selectedIndex].text : "-"));
+    var why = document.getElementById("favWhy").value.trim();
+    if (why) L.push("Warum:   " + why);
+    var gen = document.getElementById("general").value.trim();
+    if (gen){ L.push(""); L.push("Sonstiges: " + gen); }
+    return L.join("\n");
+  }
+
+  document.getElementById("copyBtn").addEventListener("click", function(){
+    var txt = buildText();
+    var hint = document.getElementById("copyHint");
+    function fallback(){
+      var ta = document.getElementById("out");
+      ta.style.display = "block";
+      ta.value = txt;
+      ta.select();
+      hint.textContent = "Kopieren hat nicht automatisch geklappt – markier den Text unten und kopier ihn von Hand.";
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(function(){
+        hint.textContent = "Kopiert. Jetzt in WhatsApp oder eine Mail einfügen.";
+      }).catch(fallback);
+    } else {
+      fallback();
+    }
+  });
+
+  document.getElementById("showBtn").addEventListener("click", function(){
+    var ta = document.getElementById("out");
+    ta.style.display = "block";
+    ta.value = buildText();
+  });
+
+  document.getElementById("printBtn").addEventListener("click", function(){ window.print(); });
+
+  window.addEventListener("beforeunload", function(e){
+    var touched = false;
+    VARIANTS.forEach(function(v){
+      var st = state[v.id];
+      if (Object.keys(st.scores).length || st.keep || st.annoy) touched = true;
+    });
+    if (touched){ e.preventDefault(); e.returnValue = ""; }
+  });
+})();
+</script>
+</body>
+</html>
